@@ -1,7 +1,11 @@
+#!/usr/bin/python3
 import requests
 from bs4 import BeautifulSoup
 import os
 import shutil
+import argparse
+
+
 
 
 class mangaDownloader:
@@ -15,14 +19,18 @@ class mangaDownloader:
 
     def makeFolders(self):
         for chap_name in self.chapterDetails:
-            chapter_dir = chap_name.find('a', href=True, text=True).get_text()
+            try:
+                chapter_dir = chap_name.find('a', href=True, text=True).get_text()
+            except:
+                chapter_dir = (chap_name.find('a').get_text().strip())
+
             dir_name = os.path.join(self.baseFolder, chapter_dir.strip())
             if os.path.exists(dir_name):
-                print(f"Deleting {dir_name}")
-                shutil.rmtree(dir_name)
+                print(f"Reusing {dir_name}")
+                # shutil.rmtree(dir_name)
             else:
                 pass
-            os.mkdir(dir_name)
+            os.makedirs(dir_name, exist_ok=True)
             self.allFolders.append(dir_name)
 
     def downloadImagesInFolder(self):
@@ -37,6 +45,9 @@ class mangaDownloader:
             for curr_img in all_images:
                 file_name = os.path.splitext(curr_img)[0].split("/")[-1]
                 file_ext = os.path.splitext(curr_img)[-1]
+                if os.path.exists(os.path.join(self.allFolders[i], f'{file_name}{file_ext}')):
+                    # print(f"Skipping file: {file_name}{file_ext} in Directory: {self.allFolders[i]}")
+                    continue
                 page = requests.get(curr_img)
                 print(f"Creating file: {file_name}{file_ext} in Directory: {self.allFolders[i]}")
                 with open(os.path.join(self.allFolders[i], f'{file_name}{file_ext}'), 'wb') as f:
@@ -45,8 +56,12 @@ class mangaDownloader:
 
 
 if __name__ == "__main__":
-    site = input("Enter link for manga on mangaclash.com: ")
-    inp_location = input("enter storage location: ")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u","--url",help="manga url")
+    parser.add_argument("-d","--dir",help="output directory")
+    args = parser.parse_args()
+    site = args.url
+    inp_location = args.dir
 
     mangaDownloaderObj = mangaDownloader(site, inp_location)
     mangaDownloaderObj.makeFolders()
