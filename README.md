@@ -3,11 +3,7 @@
 This is a manga downloader.
 You can download mangas from <a href="https://mangaclash.com/">mangaclash.com</a>
 
-download the code and run the program, then -
-
-- Simply insert the link of the manga from that site, make sure the link is from the main page for the manga, the page that displays all the chapters.
-
-- Then insert the save location, where you want your manga to be downloaded.
+download the code and run the program, ./main.py --url="manga url" --dir="path to save it to"
 
 It will dispaly which page is currently being downloaded.
 
