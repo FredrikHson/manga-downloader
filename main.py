@@ -37,7 +37,8 @@ class mangaDownloader:
 
         dir_name = os.path.join(self.baseFolder, chapter_dir.strip())
         if os.path.exists(dir_name):
-            return "EXIST"
+            if os.listdir(dir_name):
+                return "EXIST"
 
         print("creating:" + dir_name)
         os.makedirs(dir_name, exist_ok=True)
